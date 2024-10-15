@@ -1,6 +1,8 @@
 package anime
 
 import (
+	"api/src/common/config"
+	"api/src/core/modules/anime/types"
 	"log"
 	"strings"
 	"time"
@@ -9,20 +11,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type AnimeReleases struct {
-	Title         string `json:"title"`
-	Link          string `json:"link"`
-	ImageLink     string `json:"image_link"`
-	EpisodeTitle  string `json:"episode_title"`
-	EpisodeNumber string `json:"episode_number"`
-	Quality       string `json:"quality"`
-}
-
 func ReleaseAnimes() string {
-	return "https://otakuanimesscc.com/"
+	cfg := config.GetConfig().Otakus
+	return cfg
 }
 
-func scrapeAnimeLatests(url string) ([]AnimeReleases, error) {
+func scrapeAnimeLatests(url string) ([]types.AnimeReleases, error) {
 	crawler := colly.NewCollector()
 
 	crawler.Limit(&colly.LimitRule{
@@ -30,7 +24,7 @@ func scrapeAnimeLatests(url string) ([]AnimeReleases, error) {
 		RandomDelay: 2 * time.Second,
 	})
 
-	var lancamentos []AnimeReleases
+	var lancamentos []types.AnimeReleases
 
 	crawler.OnHTML("div.ultEps div.ultEpsContainer div.ultEpsContainerItem a", func(e *colly.HTMLElement) {
 		title := strings.TrimSpace(e.ChildAttr("img", "alt"))
@@ -47,7 +41,7 @@ func scrapeAnimeLatests(url string) ([]AnimeReleases, error) {
 		title = strings.TrimSpace(strings.ReplaceAll(strings.ReplaceAll(title, "\n", ""), "\t", ""))
 
 		if title != "" && link != "" {
-			anime := AnimeReleases{
+			anime := types.AnimeReleases{
 				Title:         title,
 				Link:          link,
 				ImageLink:     imageLink,

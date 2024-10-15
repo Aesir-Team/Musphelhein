@@ -7,5 +7,6 @@ import (
 )
 
 func AnimeController(app *fiber.App) {
-	app.Get("/", anime.GetAnimeStreamController)
+	app.Get("/releases", anime.ReleasesAnimeController)
+	app.Get("/latest-episodes", anime.LatestEpisodesController)
 }
